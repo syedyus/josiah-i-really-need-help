@@ -1,0 +1,30 @@
+function init(self)
+	msg.post(".","acquire_input_focus")
+	msg.post("#title_proxy","load")
+	self.current_collection = "#title_proxy"
+end
+
+function final(self)
+	msg.post(".","release_input_focus")
+end
+
+function on_message(self, message_id, message, sender)
+	if message_id == hash("proxy_loaded") then
+		msg.post(sender,"enable")
+	elseif message_id == hash("show title screen") then
+		msg.post(self.current_collection, "unload")
+		msg.post("#title_proxy", "load")
+		self.current_collection = "#title_proxy"
+	elseif message_id == hash("game") then
+		print("test")
+		msg.post(self.current_collection, "unload")
+		msg.post("#game_proxy", "load")
+		self.current_collection = "#game_proxy"
+	elseif message_id == hash("game") then
+		print("test")
+		msg.post(self.current_collection, "unload")
+		msg.post("#settings_proxy", "load")
+		self.current_collection = "#settings_proxy"
+	end
+	
+end

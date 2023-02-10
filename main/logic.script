@@ -1,0 +1,89 @@
+touch = hash("touch")
+function spawning_board(self)
+	
+
+	self.board = {0,0,0,0,0,0,0,0,0}
+	
+	self.height = {}
+	self.width = {}
+	local width, height = window.get_size()
+	for i=-1, 1, 1 do
+		for j=-1, 1, 1 do
+			wide = width/2 +( i * 146.5)
+			long = height/2 + (j * 146.5)
+			local pos  = vmath.vector3(wide, long, 0)
+				
+			grid=factory.create('#board_factory', pos)
+			table.insert(self.height,long)
+			table.insert(self.width, wide)
+			
+		end
+	end
+	
+end
+
+
+function init(self)
+	self.draw = 0
+	self.cross_goes_first = true
+	self.tile = 146.5
+	self.board_full = 0 
+	self.half_tile = 73.25
+	msg.post(".", "acquire_input_focus")
+	self.place = true
+	spawning_board(self)
+end
+
+function win_check(self)
+	for i = 1,3,3 do
+		print(i)
+		if self.board[i] == self.board[i+3] == self.board[i+6] and not self.board[i] == 0 then
+			print("player" .. self.board[i] .. "wins")
+		end
+	end
+end
+function on_input(self, action_id, action)
+	if action_id == hash("touch") and action.pressed then
+		local x, y = action.x, action.y
+		print("x: " .. x.. "and y: " .. y)
+		
+		
+		for i = 1,9,1 do
+			if (x < self.width[i] + self.half_tile and  x > self.width[i] - self.half_tile) and (y < self.height[i] +self.half_tile and y > self.height[i] - self.half_tile ) and self.board[i] == 0  then
+				self.draw = self.draw +1 
+				print("found at location " .. i)
+				piece_spawn_point = vmath.vector3(self.width[i],self.height[i],0)
+				if self.cross_goes_first then
+					
+					table.remove(self.board,i)
+					table.insert(self.board,i, 1)
+					win_check(self)
+					self.cross_goes_first = false
+					factory.create("#cross_spawner", piece_spawn_point)
+					
+					
+						
+				elseif not self.cross then
+					
+					table.remove(self.board,i)
+					table.insert(self.board,i, 2)
+					win_check(self)
+					factory.create("#nought_spawner", piece_spawn_point)	
+					self.cross_goes_first = true
+				end
+				
+			elseif self.draw == 9  then
+				
+				print("draw")
+				
+				
+				
+				
+					
+			end
+			pprint(self.board)
+		end
+	end
+end
+			
+	
